@@ -43,15 +43,18 @@ jobs:
           python-version: '3.12'
           cache: 'pip'
 
-      - name: Install Google Chrome
+      - name: Setup Google Chrome
         if: matrix.browser == 'chrome'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y wget curl unzip libxi6 libgconf-2-4 libnss3
-          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
+          if ! command -v google-chrome &> /dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y wget curl gnupg ca-certificates
+            wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg
+            echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+            sudo apt-get update
+            sudo apt-get install -y google-chrome-stable
+          fi
+          google-chrome --version
 
       - name: Install Dependencies
         run: |
@@ -69,7 +72,15 @@ jobs:
           DATA_SOURCE: ${{ github.event.inputs.data_source || 'excel' }}
           AUT_NAME: "automationexercise"
         run: |
-          pytest -v --browser=${{ matrix.browser }} --headless
+          python -m pytest -v tests/test_e2e_purchase.py -k "TC_E2E_01" --browser=${{ matrix.browser }} --headless
+
+      - name: Upload Output PDF
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: output-pdf-${{ matrix.browser }}
+          path: output.pdf
+          retention-days: 14
 
       - name: Upload HTML Test Report
         if: always()

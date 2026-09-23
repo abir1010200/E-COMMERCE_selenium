@@ -16,7 +16,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     ca-certificates \
     libnss3 \
-    libgconf-2-4 \
     libfontconfig1 \
     fonts-liberation \
     && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg \
@@ -43,4 +42,4 @@ COPY . .
 RUN python -m utilities.create_excel_data
 
 # Entrypoint default command
-CMD ["pytest", "-v", "--headless"]
+CMD ["python", "-m", "pytest", "-v", "--headless"]
