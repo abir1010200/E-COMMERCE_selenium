@@ -1,0 +1,29 @@
+# Python cache & virtual environment
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+.env
+.venv
+venv/
+.idea/
+.vscode/
+
+# Duplicate mirror directory (tracked via root)
+selenium_ecommerce_automation/
+
+# Transient logs
+logs/*.log
+
+# Ephemeral dated reports (keep latest and dedicated outputs)
+reports/report_*.html
+reports/report_*.pdf
+reports/summary_*.txt
+reports/output_only_*.txt
+screenshots/crop_test.png
+screenshots/test_*.png
