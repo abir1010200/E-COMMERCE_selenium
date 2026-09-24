@@ -1,86 +1,76 @@
-# Capstone Assignment 1: E-Commerce Web Application Automation
+# Capstone Project: E-Commerce Web Automation
 
-A clean, basic, and complete Selenium WebDriver with Python test automation project adhering to the Page Object Model (POM) pattern.
+An automated end-to-end testing suite for an e-commerce platform using **Python** and **Selenium WebDriver**.
 
-## 📋 Business Scenario & 10 Mandatory Requirements
-
-A customer wants to purchase a product from an E-Commerce site (`https://automationexercise.com/`). The automation accomplishes:
-
-| # | Requirement | Implementation in Project |
-|---|-------------|----------------------------|
-| 1 | **Launch browser** | `tests/conftest.py` configures Chrome / Firefox via `webdriver-manager` with explicit waits |
-| 2 | **Login to application** | `pages/login_page.py` authenticates using test credentials (with auto-registration fallback) |
-| 3 | **Search product** | `pages/product_page.py` searches for product from test data and verifies search results |
-| 4 | **Add product to cart** | `pages/product_page.py` adds product to shopping cart and handles confirmation modal |
-| 5 | **Update quantity** | `pages/cart_page.py` updates product quantity |
-| 6 | **Verify cart details** | `pages/cart_page.py` verifies product name, quantity, unit price, and total price calculation ($Total = Unit \times Qty$) |
-| 7 | **Capture screenshots** | Captured at every key milestone in `screenshots/` directory + automated failure screenshot capture |
-| 8 | **Read test data from Excel / JSON** | Reads test cases from `test_data/test_data.xlsx` or `test_data/test_data.json` |
-| 9 | **Handle popup / alerts if available** | Handled in `pages/base_page.py` (overlays, modals, consent dialogs, alerts) |
-| 10 | **Generate execution report** | Generates clean, interactive HTML test execution report at `reports/report.html` |
+This project automates a complete customer purchasing workflow on [Automation Exercise](https://automationexercise.com/), from user login to cart verification and price calculation assertions.
 
 ---
 
-## 📁 Project Directory Structure
+## 🎯 Project Overview & Workflow
+
+The automated script covers the full purchase lifecycle:
+
+1. **Launch Browser**: Initializes Google Chrome WebDriver with custom options (`eager` page loading to avoid renderer timeouts from third-party ads).
+2. **Handle Popups**: Automatically detects and dismisses cookie consent banners and overlays.
+3. **User Authentication**: Logs in with test credentials (with automatic signup and profile creation fallback if the user is not found).
+4. **Cart Cleanup**: Clears any previous session items to ensure accurate quantity testing.
+5. **Product Search**: Searches for the target product (`Blue Top`) from the catalog.
+6. **Product Detail & Quantity**: Navigates to the product detail page and sets the quantity to `3`.
+7. **Add to Cart & Modal Handling**: Adds the product to the shopping cart and interacts with the confirmation modal.
+8. **Cart Verification**:
+   - Asserts product name contains `Blue Top`.
+   - Asserts quantity equals `3`.
+   - Asserts financial calculation: $\text{Total Price} = \text{Unit Price} \times \text{Quantity}$.
+9. **Milestone Screenshot**: Captures and saves a full viewport verification image as `screenshot.png`.
+10. **Browser Teardown**: Closes the browser cleanly upon completion.
+
+---
+
+## 📁 Project Structure
 
 ```text
 Selenium/
-├── config/
-│   ├── config.py              # Centralized configuration (timeouts, browser, AUT URL)
-│   └── settings.json          # Configuration parameters
-├── pages/
-│   ├── base_page.py           # Base Page Object with reusable helper methods
-│   ├── home_page.py           # Home page elements and actions
-│   ├── login_page.py          # Login and registration actions
-│   ├── product_page.py        # Product search and add-to-cart actions
-│   └── cart_page.py           # Cart verification and quantity update actions
-├── reports/
-│   └── report.html            # Test execution report (HTML format)
-├── screenshots/               # Step-by-step and failure screenshots
-├── test_data/
-│   ├── test_data.xlsx         # Excel test dataset (openpyxl)
-│   └── test_data.json         # JSON test dataset
-├── tests/
-│   ├── conftest.py            # Pytest fixtures and browser lifecycle
-│   └── test_e2e_purchase.py   # E2E test covering the 10 requirements
-├── utilities/
-│   ├── data_loader.py         # Data loader supporting Excel and JSON
-│   ├── excel_reader.py        # Excel file reader
-│   ├── json_reader.py         # JSON file reader
-│   ├── logger.py              # Centralized logging setup
-│   └── report_helper.py       # Screenshot path helper
-├── pytest.ini                 # Pytest configuration and HTML report settings
-├── requirements.txt           # Project dependencies
-└── README.md                  # Project documentation
+├── main.py              # Consolidated single-file automation script with step comments
+├── screenshot.png       # Captured milestone execution screenshot
+├── requirements.txt     # Python project dependencies
+├── pytest.ini           # Optional Pytest test runner configuration
+└── README.md            # Project documentation
 ```
 
 ---
 
 ## 🚀 Getting Started
 
-### 1. Install Dependencies
+### 1. Prerequisites
+- Python 3.8+ installed
+- Google Chrome browser installed
+
+### 2. Install Dependencies
 ```powershell
 pip install -r requirements.txt
 ```
 
-### 2. Run Test Suite
-To run the complete automated test suite:
+### 3. Run the Automation Script
+
+Run the consolidated single-file script:
 ```powershell
-python -m pytest
+python main.py
 ```
 
-### 3. Run in Headless Mode
+Or run via Pytest:
 ```powershell
-python -m pytest --headless
+python -m pytest main.py
 ```
 
-### 4. Run with JSON Test Data (Instead of Excel)
-```powershell
-python -m pytest --data-source=json
-```
-
-### 5. View Test Execution Report
-After execution, open the self-contained execution report in your browser:
+### 4. Output & Verification
+Upon execution, the terminal outputs step-by-step progress and verification confirmation:
 ```text
-reports/report.html
+Logged in successfully!
+Searched for 'Blue Top'
+Opened product detail: https://automationexercise.com/product_details/1
+Added product to cart with quantity 3
+Navigated to Cart page
+ALL ASSERTIONS PASSED: Name: 'Blue Top' | Qty: 3 | Unit: Rs. 500.0 | Total: Rs. 1500.0
+Saved screenshot to screenshot.png
 ```
+A visual proof of test execution is saved in `screenshot.png`.
